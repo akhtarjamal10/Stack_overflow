@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Language Frequency Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Top 10 programming Language Frequency (2022–2024)</h2>
+  <canvas id="languageChart" width="800" height="400"></canvas>
+
+  <script>
+    const ctx = document.getElementById('languageChart').getContext('2d');
+
+    fetch('http://127.0.0.1:5000/language-frequency')
+
+      .then(response => response.json())
+      .then(data => {
+        const years = ['2022', '2023', '2024'];
+        const languages = Object.keys(data[years[0]]);
+
+        const datasets = languages.map(lang => ({
+          label: lang,
+          data: years.map(year => data[year][lang]),
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3
+        }));
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: years,
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Stack Overflow Language Frequency (2022–2024)'
+              },
+              legend: {
+                display: true,
+                position: 'bottom'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  </script>
+</body>
+</html>
